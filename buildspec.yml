@@ -1,0 +1,45 @@
+version: 0.2
+
+run-as: Linux-Build
+
+env:
+  parameter-store:
+    DOCKER_CREDENTIALS_URI: /cicd/docker-credentials/uri
+
+phases:
+  # setup run time
+  install:
+    run-as: Linux-Build
+    on-failure: ABORT | CONTINUE
+    runtime-versions:
+      # linux image with python runtime
+      python: 3.11
+
+  # aws cli setup
+  pre_build:
+    run-as: Linux-Build
+    on-failure: ABORT | CONTINUE
+    commands:
+      - echo "Pre Build Stage ..."
+      - cd ..
+      - curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      - apt install unzip -y
+      - unzip -o awscliv2.zip
+      - ./aws/install
+      - aws --version
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$DOCKER_CREDENTIALS_URI"
+
+  build:
+    run-as: Linux-Build
+    on-failure: ABORT | CONTINUE
+    commands:
+      - echo "Building Docker Image ..."
+      - docker build -t "$DOCKER_CREDENTIALS_URI:latest" .
+      - docker push "$DOCKER_CREDENTIALS_URI:latest"
+    # steps:
+
+  post_build:
+    run-as: Linux-Build
+    on-failure: ABORT | CONTINUE
+    commands:
+      - echo "Post Build Stage ..."
