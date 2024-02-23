@@ -1,7 +1,5 @@
 version: 0.2
 
-run-as: Linux-Build
-
 env:
   parameter-store:
     DOCKER_CREDENTIALS_URI: /cicd/docker-credentials/uri
@@ -9,7 +7,6 @@ env:
 phases:
   # setup run time
   install:
-    run-as: Linux-Build
     on-failure: ABORT | CONTINUE
     runtime-versions:
       # linux image with python runtime
@@ -17,7 +14,6 @@ phases:
 
   # aws cli setup
   pre_build:
-    run-as: Linux-Build
     on-failure: ABORT | CONTINUE
     commands:
       - echo "Pre Build Stage ..."
@@ -30,7 +26,6 @@ phases:
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin "$DOCKER_CREDENTIALS_URI"
 
   build:
-    run-as: Linux-Build
     on-failure: ABORT | CONTINUE
     commands:
       - echo "Building Docker Image ..."
@@ -39,7 +34,6 @@ phases:
     # steps:
 
   post_build:
-    run-as: Linux-Build
     on-failure: ABORT | CONTINUE
     commands:
       - echo "Post Build Stage ..."
