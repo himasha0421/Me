@@ -30,7 +30,8 @@ phases:
     commands:
       - echo "Building Docker Image ..."
       - ls
-      - cd Me
+      - cd src
+      - ls
       - docker build -t "$DOCKER_CREDENTIALS_URI:latest" .
       - docker push "$DOCKER_CREDENTIALS_URI:latest"
     # steps:
