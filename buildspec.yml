@@ -29,6 +29,8 @@ phases:
     on-failure: ABORT | CONTINUE
     commands:
       - echo "Building Docker Image ..."
+      - cd Me
+      - ls
       - docker build -t "$DOCKER_CREDENTIALS_URI:latest" .
       - docker push "$DOCKER_CREDENTIALS_URI:latest"
     # steps:
